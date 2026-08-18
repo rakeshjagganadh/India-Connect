@@ -1,6 +1,8 @@
 {
   "name": "IndiaConnect",
-  "description": "A premium, unified directory for essential Indian government services.",
+  "description": "A modern, highly optimized unified citizen directory of 60+ verified Indian government services with instant search, top quick portals, and direct official redirections.",
   "requestFramePermissions": [],
-  "majorCapabilities": []
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

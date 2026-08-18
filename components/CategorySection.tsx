@@ -1,55 +1,81 @@
 import React from 'react';
-import { Category } from '../types';
+import { Category, ServiceLink, ViewMode } from '../types';
 import ServiceCard from './ServiceCard';
+import ServiceListItem from './ServiceListItem';
+import Icon from './Icon';
 
 interface CategorySectionProps {
   category: Category;
+  services: ServiceLink[];
+  viewMode: ViewMode;
+  onSelectDetail: (service: ServiceLink) => void;
+  onViewCategory: (categoryId: string) => void;
 }
 
-// Gradient mapping based on category ID
-const getGradient = (id: string): string => {
-  switch (id) {
-    case 'identity':
-      return 'from-blue-500 to-blue-600'; // Blue
-    case 'health':
-      return 'from-rose-500 to-red-600'; // Red/Pink
-    case 'finance':
-      return 'from-emerald-500 to-teal-600'; // Green
-    case 'transport':
-      return 'from-orange-400 to-red-500'; // Orange
-    case 'business':
-      return 'from-violet-500 to-purple-600'; // Purple
-    case 'education':
-      return 'from-sky-400 to-indigo-500'; // Sky/Indigo
-    case 'safety':
-      return 'from-slate-600 to-slate-800'; // Dark Slate
-    default:
-      return 'from-gray-500 to-gray-600';
-  }
-};
-
-const CategorySection: React.FC<CategorySectionProps> = ({ category }) => {
-  if (category.services.length === 0) return null;
-
-  const gradient = getGradient(category.id);
+const CategorySection: React.FC<CategorySectionProps> = ({
+  category,
+  services,
+  viewMode,
+  onSelectDetail,
+  onViewCategory,
+}) => {
+  if (services.length === 0) return null;
 
   return (
-    <div className="mb-12">
-      {/* Apple Settings-style Header */}
-      <h2 className="mb-4 ml-1 text-xs font-bold uppercase tracking-wider text-gray-500">
-        {category.title}
-      </h2>
-      
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {category.services.map((service) => (
-          <ServiceCard 
-            key={service.id} 
-            service={service} 
-            gradient={gradient}
-          />
-        ))}
+    <section className="mb-10 sm:mb-12">
+      {/* Category Section Header */}
+      <div className="flex items-center justify-between gap-3 mb-4 pb-2 border-b border-slate-200/80">
+        <div className="flex items-center gap-2.5">
+          <div
+            className={`w-8 h-8 rounded-lg bg-gradient-to-br ${category.gradient} flex items-center justify-center text-white shadow-xs`}
+          >
+            <Icon name={category.iconName} className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-tight">
+              {category.title}
+            </h3>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-semibold text-slate-400">
+            {services.length} {services.length === 1 ? 'service' : 'services'}
+          </span>
+          <button
+            onClick={() => onViewCategory(category.id)}
+            className="text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline hidden sm:inline-block"
+          >
+            View all &rarr;
+          </button>
+        </div>
       </div>
-    </div>
+
+      {/* Services Grid or List */}
+      {viewMode === 'list' ? (
+        <div className="space-y-2.5">
+          {services.map((service) => (
+            <ServiceListItem
+              key={service.id}
+              service={service}
+              gradient={category.gradient}
+              onSelectDetail={onSelectDetail}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-5">
+          {services.map((service) => (
+            <ServiceCard
+              key={service.id}
+              service={service}
+              gradient={category.gradient}
+              onSelectDetail={onSelectDetail}
+            />
+          ))}
+        </div>
+      )}
+    </section>
   );
 };
 

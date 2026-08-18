@@ -1,48 +1,106 @@
 import React from 'react';
 import { ServiceLink } from '../types';
 import Icon from './Icon';
+import { motion } from 'motion/react';
 
 interface ServiceCardProps {
   service: ServiceLink;
   gradient: string;
+  onSelectDetail: (service: ServiceLink) => void;
 }
 
-const ServiceCard: React.FC<ServiceCardProps> = ({ service, gradient }) => {
+const ServiceCard: React.FC<ServiceCardProps> = ({
+  service,
+  gradient,
+  onSelectDetail,
+}) => {
   return (
-    <a
-      href={service.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group relative flex flex-col h-full bg-white rounded-[22px] border border-gray-200 p-5 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-gray-300 animate-fade-in"
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.2 }}
+      className="group relative flex flex-col justify-between h-full bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.06)] hover:border-slate-300/90 transition-all duration-200"
     >
-      <div className="flex flex-col h-full items-start w-full">
-        {/* Icon Container with Gradient */}
-        <div className={`mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${gradient} text-white shadow-sm ring-1 ring-black/5`}>
-          <Icon name={service.iconName} className="h-7 w-7 drop-shadow-sm" />
+      <div>
+        {/* Top Header: Icon + Badge */}
+        <div className="flex items-start justify-between gap-2 mb-3.5">
+          <div
+            className={`flex h-12 w-12 sm:h-13 sm:w-13 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${gradient} text-white shadow-sm ring-1 ring-black/5 group-hover:scale-105 transition-transform duration-200`}
+          >
+            <Icon name={service.iconName} className="h-6 w-6 text-white" />
+          </div>
+
+          {service.badge && (
+            <span
+              className={`inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold tracking-wide ${
+                service.badge === 'Essential'
+                  ? 'bg-amber-50 text-amber-700 border border-amber-200/60'
+                  : service.badge === 'Popular'
+                  ? 'bg-blue-50 text-blue-700 border border-blue-200/60'
+                  : service.badge === 'Instant'
+                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
+                  : 'bg-slate-100 text-slate-700 border border-slate-200'
+              }`}
+            >
+              {service.badge}
+            </span>
+          )}
         </div>
-        
+
         {/* Content */}
-        <div className="flex-1 w-full">
-          <h3 className="mb-1.5 text-[17px] font-semibold text-gray-900 leading-tight group-hover:text-blue-600 transition-colors">
-            {service.title}
-          </h3>
-          
-          <p className="text-[13px] leading-relaxed text-gray-500 font-medium line-clamp-2">
+        <div className="mb-3">
+          <div className="flex items-center gap-1.5 mb-1">
+            <h3 className="text-[15px] sm:text-[16px] font-bold text-slate-900 leading-snug group-hover:text-blue-600 transition-colors">
+              {service.title}
+            </h3>
+            {service.state && (
+              <span className="shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">
+                {service.state}
+              </span>
+            )}
+          </div>
+
+          <p className="text-[13px] leading-relaxed text-slate-500 line-clamp-2">
             {service.description}
           </p>
         </div>
-        
-        {/* Chevron Action */}
-        <div className="mt-4 flex w-full items-center justify-between border-t border-gray-50 pt-3 opacity-60 group-hover:opacity-100 transition-opacity">
-          <span className="text-[11px] font-bold uppercase tracking-wide text-gray-400 group-hover:text-blue-600 transition-colors">Open</span>
-          <div className="h-6 w-6 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors">
-             <svg className="h-3 w-3 text-gray-400 group-hover:text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-            </svg>
+
+        {/* Department / Authority note */}
+        {service.department && (
+          <div className="mb-3 text-[11px] font-medium text-slate-400 truncate flex items-center gap-1">
+            <span className="h-1.5 w-1.5 rounded-full bg-slate-300 shrink-0"></span>
+            <span className="truncate">{service.department}</span>
           </div>
-        </div>
+        )}
       </div>
-    </a>
+
+      {/* Action Footer */}
+      <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2 mt-auto">
+        <button
+          type="button"
+          onClick={() => onSelectDetail(service)}
+          className="inline-flex items-center gap-1 text-[12px] font-semibold text-slate-600 hover:text-blue-600 px-2.5 py-1.5 rounded-lg hover:bg-slate-50 transition-colors"
+        >
+          <Icon name="info" className="w-3.5 h-3.5" />
+          <span>Details</span>
+        </button>
+
+        <a
+          href={service.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-blue-600 text-white text-[12px] font-semibold shadow-sm hover:shadow transition-all group/btn"
+        >
+          <span>Open Portal</span>
+          <Icon
+            name="external-link"
+            className="w-3.5 h-3.5 opacity-80 group-hover/btn:translate-x-0.5 transition-transform"
+          />
+        </a>
+      </div>
+    </motion.div>
   );
 };
 

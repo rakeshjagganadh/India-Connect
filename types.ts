@@ -4,12 +4,31 @@ export interface ServiceLink {
   description: string;
   url: string;
   iconName: string;
-  categoryId: string; // Added for easier flat-list filtering
+  categoryId: string;
+  department?: string;
+  tags?: string[];
+  state?: string;
+  features?: string[];
+  badge?: 'Popular' | 'Essential' | 'Instant' | 'Free' | 'New' | 'Verified';
 }
 
 export interface Category {
   id: string;
   title: string;
-  gradient: string; // Store gradient config here for consistency
-  services: ServiceLink[];
+  iconName: string;
+  gradient: string;
+  accentColor: string;
+  description: string;
 }
+
+export interface Helpline {
+  id: string;
+  name: string;
+  number: string;
+  description: string;
+  category: string;
+  iconName: string;
+  badge?: string;
+}
+
+export type ViewMode = 'grid' | 'list' | 'grouped';
